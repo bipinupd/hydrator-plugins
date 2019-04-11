@@ -278,34 +278,28 @@ public final class DBUtils {
           return resultSet.getString(fieldName);
         case Types.BLOB:
           Blob blob = (Blob) original;
-          if (blob == null) {
-            return null;
-          } else {
-            try {
+          try {
               return blob.getBytes(1, (int) blob.length());
             } finally {
+             try {
               blob.free();
+            } catch (Exception e) {
+              LOG.debug("Making sure the clob.free does not throw exception .... ");
             }
           }
         case Types.CLOB:
           Clob clob = (Clob) original;
-          if (clob == null) {
-            return null;
-          } else {
             try {
-              if (clob != null) {
                 return clob.getSubString(1, (int) clob.length());
-              }
             } finally {
               try {
                 clob.free();
-              }catch (Exception e) {
+              } catch (Exception e) {
                 LOG.debug("Making sure the clob.free does not throw exception .... ");
               }
             }
           }
       }
-    }
     return original;
   }
   /**
